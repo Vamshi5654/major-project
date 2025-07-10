@@ -25,9 +25,16 @@ const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+// const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
-mongoose.connect(MONGO_URL, {
+require("dotenv").config();
+mongoose.connect(process.env.DB_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
+
+
+mongoose.connect(process.env.DB_URL, {
     // useNewUrlParser: true,
     // useUnifiedTopology: true,
 })
