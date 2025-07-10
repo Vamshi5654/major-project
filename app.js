@@ -28,8 +28,8 @@ const userRouter = require("./routes/user.js");
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
 mongoose.connect(MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+    // useNewUrlParser: true,
+    // useUnifiedTopology: true,
 })
 .then(() => {
     console.log("✅ Connected to DB");
