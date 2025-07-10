@@ -51,7 +51,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Session configuration
 const sessionOptions = {
-  // store,
+  
   secret: "mysupersecretcode",
   resave: false,
   saveUninitialized: true,
@@ -59,6 +59,12 @@ const sessionOptions = {
     httpOnly: true,
     expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
     maxAge: 7 * 24 * 60 * 60 * 1000,
+     store: MongoStore.create({
+    mongoUrl: 'mongodb://localhost:27017/your_db',
+     })
+
+    
+  
   },
 };
 
