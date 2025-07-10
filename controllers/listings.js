@@ -1,7 +1,14 @@
 const Listing = require("../models/listing");
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
+
 const mapToken = process.env.MAPBOX_TOKEN;
+if (!mapToken) {
+  throw new Error("❌ MAPBOX_TOKEN is not set in environment variables.");
+}
 const geocodingClient = mbxGeocoding({ accessToken: mapToken });
+
+// const mapToken = process.env.MAPBOX_TOKEN;
+// const geocodingClient = mbxGeocoding({ accessToken: mapToken });
 
 module.exports.index = async (req, res) => {
     const allListings = await Listing.find({});
