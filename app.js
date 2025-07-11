@@ -20,6 +20,17 @@ const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 
+const rateLimit = require("express-rate-limit");
+
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 30, // limit each IP to 30 requests per minute
+  message: "Too many requests, please try again in a minute.",
+});
+
+app.use(limiter);
+
+
 // ✅ Use correct DB URL
 const dbUrl = process.env.DB_URL;
 
