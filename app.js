@@ -1,12 +1,7 @@
-// Load environment variables in development
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
-  console.log("🌐 DB URL is:", process.env.DB_URL);
-
-  
 }
 
-// Required modules
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -21,50 +16,43 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 
-// Models & Routes
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 
-// ✅ Use DB_URL from environment variable or fallback to local
-const dbUrl =  "mongodb://127.0.0.1:27017/wanderlust";
+// ✅ Use correct DB URL
+const dbUrl = process.env.DB_URL;
 
-// Connect to MongoDB (no deprecated options)
 mongoose.connect(dbUrl)
   .then(() => {
-    console.log("✅ Connected to DB");
+    console.log("✅ Connected to MongoDB");
   })
   .catch((err) => {
-    console.error("❌ DB Connection Error:", err.message);
+    console.error("❌ MongoDB connection error:", err.message);
   });
 
-// Optional: Listen for DB errors after initial connection
 mongoose.connection.on("error", (err) => {
   console.error("❌ Mongoose connection error:", err.message);
 });
-
-
-
 
 // View engine setup
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Middlewares
+// Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
-// ✅ Session configuration with MongoStore
 const sessionOptions = {
   secret: process.env.SECRET || "mysupersecretcode",
   resave: false,
   saveUninitialized: true,
   store: MongoStore.create({
     mongoUrl: dbUrl,
-    touchAfter: 24 * 3600, // optional: reduces write frequency
+    touchAfter: 24 * 3600,
   }),
   cookie: {
     httpOnly: true,
@@ -75,21 +63,18 @@ const sessionOptions = {
 app.use(session(sessionOptions));
 app.use(flash());
 
-// Passport setup
+// Passport config
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// Global middleware
+// Flash + user injection
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   res.locals.currUser = req.user;
-  if (req.user) {
-    console.log("Current user:", req.user);
-  }
   next();
 });
 
@@ -103,13 +88,14 @@ app.all("*", (req, res, next) => {
   next(new ExpressError("Page Not Found", 404));
 });
 
-// Global error handler
+// Error handler
 app.use((err, req, res, next) => {
   const { statusCode = 500, message = "Something went wrong" } = err;
   res.status(statusCode).render("error.ejs", { err });
 });
 
-// Start server
-app.listen(8080, () => {
-  console.log("🚀 Server is listening on port 8080");
+// ✅ Use dynamic port (for Render)
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`🚀 Server is listening on port ${port}`);
 });
