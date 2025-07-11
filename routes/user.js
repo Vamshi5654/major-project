@@ -6,6 +6,11 @@ const passport = require("passport");
 const { saveRedirectUrl } = require("../middleware");
 const userController = require("../controllers/users");
 
+// ✅ Add Home Route
+router.get("/", (req, res) => {
+  res.render("home"); // Ensure views/home.ejs exists
+});
+
 router.route("/signup")
   .get(userController.renderSignupForm)
   .post(wrapAsync(userController.signup));
@@ -18,7 +23,7 @@ router.route("/login")
       failureRedirect: "/login",
       failureFlash: true,
     }),
-    userController.login // ✅ Fixed: Removed trailing comma
+    userController.login
   );
 
 router.get("/logout", userController.logout);

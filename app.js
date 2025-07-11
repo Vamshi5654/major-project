@@ -1,6 +1,9 @@
 // Load environment variables in development
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
+  console.log("🌐 DB URL is:", process.env.DB_URL);
+
+  
 }
 
 // Required modules
@@ -24,21 +27,24 @@ const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 
 // ✅ Use DB_URL from environment variable or fallback to local
-const MONGO_URL =  "mongodb://127.0.0.1:27017/wanderlust";
+const dbUrl =  "mongodb://127.0.0.1:27017/wanderlust";
 
-// ✅ Connect to MongoDB (no deprecated options)
-mongoose.connect(MONGO_URL)
+// Connect to MongoDB (no deprecated options)
+mongoose.connect(dbUrl)
   .then(() => {
     console.log("✅ Connected to DB");
   })
   .catch((err) => {
-    console.error("❌ DB Connection Error:", err);
+    console.error("❌ DB Connection Error:", err.message);
   });
 
 // Optional: Listen for DB errors after initial connection
 mongoose.connection.on("error", (err) => {
-  console.error("❌ Mongoose connection error:", err);
+  console.error("❌ Mongoose connection error:", err.message);
 });
+
+
+
 
 // View engine setup
 app.engine("ejs", ejsMate);
@@ -57,7 +63,7 @@ const sessionOptions = {
   resave: false,
   saveUninitialized: true,
   store: MongoStore.create({
-    mongoUrl: MONGO_URL,
+    mongoUrl: dbUrl,
     touchAfter: 24 * 3600, // optional: reduces write frequency
   }),
   cookie: {
