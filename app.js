@@ -113,10 +113,10 @@ app.use("/listings/:id/reviews" ,reviewRouter);
 app.use("/",userRouter);
 
 
-app.use((req, res, next) => {
-    console.log("❗ Unmatched route:", req.originalUrl);
-    next();
-});
+// app.use((req, res, next) => {
+//     console.log("❗ Unmatched route:", req.originalUrl);
+//     next();
+// });
 
 app.get("/", (req, res) => {
     res.redirect("/listings");
