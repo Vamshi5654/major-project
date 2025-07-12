@@ -44,7 +44,7 @@ async function main () {
 
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"views"));
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname,"/public")));
@@ -111,6 +111,15 @@ app.use("/listings",listingRouter);
 //Restructuring reviews
 app.use("/listings/:id/reviews" ,reviewRouter);
 app.use("/",userRouter);
+
+
+app.use((req, res, next) => {
+    console.log("❗ Unmatched route:", req.originalUrl);
+    next();
+});
+
+
+
 
 app.all("*", (req ,res , next) => {
     next(new ExpressError(404, "Page not found!"));
