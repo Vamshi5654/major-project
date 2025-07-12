@@ -119,10 +119,13 @@ app.use("/",userRouter);
 // });
 
 app.get("/", (req, res) => {
-    res.redirect("home.ejs");
+    res.redirect("/listings");
 });
 
 
+app.get("/", (req, res) => {
+  res.render("home");
+});
 
 
 app.all("*", (req ,res , next) => {
